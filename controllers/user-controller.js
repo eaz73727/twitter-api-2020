@@ -7,18 +7,16 @@ const userController = {
   signIn: (req, res, next) => {
     try {
       const userData = helpers.getUser(req).toJSON()
-
       switch (true) {
         case (req.originalUrl === '/api/users/signin' && userData.role !== 'user'):
-          throw new Error('帳號不存在！')
+          throw new Error('Incorrect email or password.')
         case (req.originalUrl === '/api/admin/signin' && userData.role !== 'admin'):
-          throw new Error('帳號不存在！')
+          throw new Error('Incorrect email or password.')
         default: {
           delete userData.password
           const token = jwt.sign(userData, process.env.JWT_SECRET, { expiresIn: '15d' })
           return res.json({
-            status: 'success',
-            data: { token, user: userData }
+            status: 'success', token, user: userData
           })
         }
       }
